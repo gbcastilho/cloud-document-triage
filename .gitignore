@@ -1,0 +1,5 @@
+# Ignore n8n runtime data
+.n8n-data
+
+# Ignore postgres database files
+.postgres-data
