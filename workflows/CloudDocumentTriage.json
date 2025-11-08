@@ -1,0 +1,181 @@
+{
+  "name": "Cloud Document Triage",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Document Triage",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Google Drive File ID",
+              "placeholder": "https://drive.google.com/file/d/1ABC123XYZ789/view?usp=sharing",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "4e28dce4-12ab-4752-a774-71a5959939d6",
+      "name": "On form submission",
+      "webhookId": "e2dac81f-fe4d-4dc3-b95e-5191be9f0841"
+    },
+    {
+      "parameters": {
+        "schema": {
+          "__rl": true,
+          "value": "triage_app",
+          "mode": "list",
+          "cachedResultName": "triage_app"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documents_log",
+          "mode": "list",
+          "cachedResultName": "documents_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "file_id": "={{ $json['Google Drive File ID'] }}",
+            "status": "PENDING"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "FAILED_UNKNOWN",
+                  "value": "FAILED_UNKNOWN"
+                },
+                {
+                  "name": "FAILED_CLASSIFICATION",
+                  "value": "FAILED_CLASSIFICATION"
+                },
+                {
+                  "name": "FAILED_EXTRACTION",
+                  "value": "FAILED_EXTRACTION"
+                },
+                {
+                  "name": "FAILED_FETCH",
+                  "value": "FAILED_FETCH"
+                },
+                {
+                  "name": "NEEDS_REVIEW",
+                  "value": "NEEDS_REVIEW"
+                },
+                {
+                  "name": "COMPLETED",
+                  "value": "COMPLETED"
+                },
+                {
+                  "name": "PROCESSING",
+                  "value": "PROCESSING"
+                },
+                {
+                  "name": "PENDING",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            {
+              "id": "ai_result",
+              "displayName": "ai_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        0
+      ],
+      "id": "4e945bca-4c97-4500-bf66-c1b9ed38e279",
+      "name": "Insert rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "ajvEs6ulRqjPtOzB",
+          "name": "Postgres account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Insert rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "49fecb45-6593-453f-82b5-b3e5631a57c8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bab351a92ec4bad491fde54b8efca922bb88507784a1f68fc37ffc8467f6a098"
+  },
+  "id": "TqJwxBqkPS9P9jLf",
+  "tags": []
+}
