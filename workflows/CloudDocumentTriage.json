@@ -151,6 +151,32 @@
           "name": "Postgres account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('On form submission').item.json['Google Drive File ID'] }}",
+          "__regex": "https:\\/\\/(?:drive|docs)\\.google\\.com(?:\\/.*|)\\/d\\/([0-9a-zA-Z\\-_]+)(?:\\/.*|)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "dec42786-6eda-443a-aa1b-eb381eae9dc7",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "k0cEFqoT64yJjYQS",
+          "name": "Google Drive account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -165,13 +191,24 @@
           }
         ]
       ]
+    },
+    "Insert rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "49fecb45-6593-453f-82b5-b3e5631a57c8",
+  "versionId": "19453349-c8e9-47eb-a5bb-543c7c6e539a",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "bab351a92ec4bad491fde54b8efca922bb88507784a1f68fc37ffc8467f6a098"
