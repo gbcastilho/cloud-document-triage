@@ -1,8 +1,6 @@
-services: # The section defining all your containers
-  
-  # --- This is your n8n service ---
+services:
   n8n:
-    image: n8nio/n8n:1.119.0
+    build: .
     container_name: cloud-triage-n8n
     restart: always
     ports:
@@ -17,11 +15,10 @@ services: # The section defining all your containers
     volumes:
       - ./.n8n-data:/home/node/.n8n
       - ./workflows:/data/workflows
+      - ./python-scripts:/data/python-scripts
     depends_on:
       postgres:
         condition: service_healthy
-
-  # --- This is your Postgres database service ---
   postgres:
     image: postgres:16
     container_name: cloud-triage-postgres
@@ -33,7 +30,7 @@ services: # The section defining all your containers
       - POSTGRES_PASSWORD=mysecretpassword
       - POSTGRES_DB=n8n
     volumes:
-      - ./.postgres-data:/var/lib/postgresql
+      - ./.postgres-data:/var/lib/postgresql/data
       - ./postgres-init:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U n8n -d n8n"]

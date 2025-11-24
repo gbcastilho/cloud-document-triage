@@ -3,3 +3,6 @@
 
 # Ignore postgres database files
 .postgres-data
+
+# Ignore python virtual envs
+.venv
