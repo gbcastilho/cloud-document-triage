@@ -9,7 +9,7 @@ services:
       - DB_TYPE=postgresdb
       - DB_POSTGRESDB_HOST=postgres
       - DB_POSTGRESDB_USER=n8n
-      - DB_POSTGRESDB_PASSWORD=mysecretpassword
+      - DB_POSTGRESDB_PASSWORD=${POSTGRES_PASSWORD}
       - DB_POSTGRESDB_DATABASE=n8n
       - N8N_WORKFLOW_FILES=/data/workflows
       - GEMINI_API_KEY=${GEMINI_API_KEY}
