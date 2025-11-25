@@ -27,6 +27,441 @@
     },
     {
       "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "={{ $('On form submission').item.json['Google Drive File ID'] }}",
+          "__regex": "https:\\/\\/(?:drive|docs)\\.google\\.com(?:\\/.*|)\\/d\\/([0-9a-zA-Z\\-_]+)(?:\\/.*|)"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        560,
+        -144
+      ],
+      "id": "477561c6-8f40-4b17-b7f4-44a45bdae541",
+      "name": "Download file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "pv0VEKLWfkP3BAZk",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/tmp/temp_file.pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        176,
+        64
+      ],
+      "id": "b1d911cf-85d4-4ba5-afd3-e767a910482c",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "command": "python3 /data/python-scripts/process_pdf.py"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        368,
+        64
+      ],
+      "id": "4dda648a-5204-4bbd-8f82-02be008fc07d",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{$env.GEMINI_API_KEY}}"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Você é um classificador de documentos. Analise o texto abaixo extraído de um arquivo.\\n\\nRegras:\\n1. Se for nota fiscal/recibo: type='INVOICE'. Extraia 'total_amount' (número) e 'vendor_name'.\\n2. Se for documento pessoal (RG/CNH): type='ID_CARD'. Extraia 'full_name' e 'doc_number'.\\n3. Outros: type='OTHER'. Crie um 'summary'.\\n\\nResponda APENAS com o objeto JSON.\\n\\nTEXTO:\\n{{ JSON.stringify($json.extracted_text).slice(1, -1) }}\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"response_mime_type\": \"application/json\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        160,
+        304
+      ],
+      "id": "9bba226b-91fb-47f1-aa38-45ed6f2c9779",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "INVOICE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "772a3de1-3d26-4720-90ee-78d7bf2931db"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Invoice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "127f9cf3-a2be-4edc-9daf-cf7972b5abdd",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "ID_CARD",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ID Card"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4162c88f-3eef-4e5a-ac78-4dedde0911c4",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "OTHER",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Other"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        576,
+        288
+      ],
+      "id": "7f60a136-e337-4d59-b2ce-b0b8c136c496",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "triage_app",
+          "mode": "list",
+          "cachedResultName": "triage_app"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documents_log",
+          "mode": "list",
+          "cachedResultName": "documents_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create document log').item.json.id }}",
+            "status": "COMPLETED",
+            "ai_result": "={{JSON.stringify($json) }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "FAILED_UNKNOWN",
+                  "value": "FAILED_UNKNOWN"
+                },
+                {
+                  "name": "FAILED_CLASSIFICATION",
+                  "value": "FAILED_CLASSIFICATION"
+                },
+                {
+                  "name": "FAILED_EXTRACTION",
+                  "value": "FAILED_EXTRACTION"
+                },
+                {
+                  "name": "FAILED_FETCH",
+                  "value": "FAILED_FETCH"
+                },
+                {
+                  "name": "NEEDS_REVIEW",
+                  "value": "NEEDS_REVIEW"
+                },
+                {
+                  "name": "COMPLETED",
+                  "value": "COMPLETED"
+                },
+                {
+                  "name": "PROCESSING",
+                  "value": "PROCESSING"
+                },
+                {
+                  "name": "PENDING",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            {
+              "id": "ai_result",
+              "displayName": "ai_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        800,
+        224
+      ],
+      "id": "06afbd98-0ba3-405b-b451-b6a08c3f294d",
+      "name": "Update rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "ekDDWloedMHPGU1L",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "triage_app",
+          "mode": "list",
+          "cachedResultName": "triage_app"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documents_log",
+          "mode": "list",
+          "cachedResultName": "documents_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create document log').item.json.id }}",
+            "status": "NEEDS_REVIEW",
+            "ai_result": "={{JSON.stringify($json) }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "FAILED_UNKNOWN",
+                  "value": "FAILED_UNKNOWN"
+                },
+                {
+                  "name": "FAILED_CLASSIFICATION",
+                  "value": "FAILED_CLASSIFICATION"
+                },
+                {
+                  "name": "FAILED_EXTRACTION",
+                  "value": "FAILED_EXTRACTION"
+                },
+                {
+                  "name": "FAILED_FETCH",
+                  "value": "FAILED_FETCH"
+                },
+                {
+                  "name": "NEEDS_REVIEW",
+                  "value": "NEEDS_REVIEW"
+                },
+                {
+                  "name": "COMPLETED",
+                  "value": "COMPLETED"
+                },
+                {
+                  "name": "PROCESSING",
+                  "value": "PROCESSING"
+                },
+                {
+                  "name": "PENDING",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            {
+              "id": "ai_result",
+              "displayName": "ai_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        800,
+        368
+      ],
+      "id": "0f46624c-a46d-422f-bc5e-9fc6c9f193fa",
+      "name": "Update rows in a table1",
+      "credentials": {
+        "postgres": {
+          "id": "ekDDWloedMHPGU1L",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
         "schema": {
           "__rl": true,
           "value": "triage_app",
@@ -144,104 +579,13 @@
         -144
       ],
       "id": "8480996e-bdc3-4cb1-ba91-bb8554645b75",
-      "name": "Insert rows in a table",
+      "name": "Create document log",
       "credentials": {
         "postgres": {
           "id": "ekDDWloedMHPGU1L",
           "name": "Postgres account"
         }
       }
-    },
-    {
-      "parameters": {
-        "operation": "download",
-        "fileId": {
-          "__rl": true,
-          "mode": "url",
-          "value": "={{ $('On form submission').item.json['Google Drive File ID'] }}",
-          "__regex": "https:\\/\\/(?:drive|docs)\\.google\\.com(?:\\/.*|)\\/d\\/([0-9a-zA-Z\\-_]+)(?:\\/.*|)"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.googleDrive",
-      "typeVersion": 3,
-      "position": [
-        560,
-        -144
-      ],
-      "id": "477561c6-8f40-4b17-b7f4-44a45bdae541",
-      "name": "Download file",
-      "credentials": {
-        "googleDriveOAuth2Api": {
-          "id": "pv0VEKLWfkP3BAZk",
-          "name": "Google Drive account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "write",
-        "fileName": "/tmp/temp_file.pdf",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.readWriteFile",
-      "typeVersion": 1,
-      "position": [
-        176,
-        64
-      ],
-      "id": "b1d911cf-85d4-4ba5-afd3-e767a910482c",
-      "name": "Read/Write Files from Disk"
-    },
-    {
-      "parameters": {
-        "command": "python3 /data/python-scripts/process_pdf.py"
-      },
-      "type": "n8n-nodes-base.executeCommand",
-      "typeVersion": 1,
-      "position": [
-        368,
-        64
-      ],
-      "id": "4dda648a-5204-4bbd-8f82-02be008fc07d",
-      "name": "Execute Command"
-    },
-    {
-      "parameters": {
-        "method": "POST",
-        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
-        "sendQuery": true,
-        "queryParameters": {
-          "parameters": [
-            {
-              "name": "key",
-              "value": "={{$env.GEMINI_API_KEY}}"
-            },
-            {}
-          ]
-        },
-        "sendHeaders": true,
-        "headerParameters": {
-          "parameters": [
-            {
-              "name": "Content-Type",
-              "value": "application/json"
-            }
-          ]
-        },
-        "sendBody": true,
-        "specifyBody": "json",
-        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Você é um classificador de documentos. Analise o texto abaixo extraído de um arquivo.\\n\\nRegras:\\n1. Se for nota fiscal/recibo: type='INVOICE'. Extraia 'total_amount' (número) e 'vendor_name'.\\n2. Se for documento pessoal (RG/CNH): type='ID_CARD'. Extraia 'full_name' e 'doc_number'.\\n3. Outros: type='OTHER'. Crie um 'summary'.\\n\\nResponda APENAS com o objeto JSON.\\n\\nTEXTO:\\n{{ JSON.stringify($json.extracted_text).slice(1, -1) }}\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"response_mime_type\": \"application/json\"\n  }\n}",
-        "options": {}
-      },
-      "type": "n8n-nodes-base.httpRequest",
-      "typeVersion": 4.3,
-      "position": [
-        160,
-        272
-      ],
-      "id": "9bba226b-91fb-47f1-aa38-45ed6f2c9779",
-      "name": "HTTP Request"
     },
     {
       "parameters": {
@@ -255,7 +599,21 @@
         64
       ],
       "id": "755b9494-74be-4709-a133-fe6b875f0e21",
-      "name": "Code in Python (Beta)"
+      "name": "Format stdout"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import json\n\nhttp_response = items[0].json\n\ncandidate = http_response.candidates[0]\n\ncontent = candidate.content\n\ntext = content.parts[0].text\n\nreturn json.loads(text)"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        368,
+        304
+      ],
+      "id": "f06e1b47-d710-48db-b7f7-a2266ae13ef6",
+      "name": "Format classified text"
     }
   ],
   "pinData": {},
@@ -264,18 +622,7 @@
       "main": [
         [
           {
-            "node": "Insert rows in a table",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Insert rows in a table": {
-      "main": [
-        [
-          {
-            "node": "Download file",
+            "node": "Create document log",
             "type": "main",
             "index": 0
           }
@@ -308,18 +655,76 @@
       "main": [
         [
           {
-            "node": "Code in Python (Beta)",
+            "node": "Format stdout",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Code in Python (Beta)": {
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Format classified text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create document log": {
+      "main": [
+        [
+          {
+            "node": "Download file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format stdout": {
       "main": [
         [
           {
             "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format classified text": {
+      "main": [
+        [
+          {
+            "node": "Switch",
             "type": "main",
             "index": 0
           }
@@ -331,7 +736,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "76387b6e-8c94-4ec0-b08d-a0ffec14b91e",
+  "versionId": "31305658-ad57-4017-b19d-a4c94480700d",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e01b56afa26779f3bf4aa034d2cc10a0cc5efe0bde482193df7cb4c3089944f3"
