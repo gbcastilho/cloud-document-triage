@@ -18,10 +18,10 @@
       "type": "n8n-nodes-base.formTrigger",
       "typeVersion": 2.3,
       "position": [
-        0,
-        0
+        144,
+        -144
       ],
-      "id": "4e28dce4-12ab-4752-a774-71a5959939d6",
+      "id": "892d3e4a-9794-4f66-b30c-94ede9b9ef0b",
       "name": "On form submission",
       "webhookId": "e2dac81f-fe4d-4dc3-b95e-5191be9f0841"
     },
@@ -140,14 +140,14 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        208,
-        0
+        352,
+        -144
       ],
-      "id": "4e945bca-4c97-4500-bf66-c1b9ed38e279",
+      "id": "8480996e-bdc3-4cb1-ba91-bb8554645b75",
       "name": "Insert rows in a table",
       "credentials": {
         "postgres": {
-          "id": "ajvEs6ulRqjPtOzB",
+          "id": "ekDDWloedMHPGU1L",
           "name": "Postgres account"
         }
       }
@@ -166,17 +166,96 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        416,
-        0
+        560,
+        -144
       ],
-      "id": "dec42786-6eda-443a-aa1b-eb381eae9dc7",
+      "id": "477561c6-8f40-4b17-b7f4-44a45bdae541",
       "name": "Download file",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "k0cEFqoT64yJjYQS",
+          "id": "pv0VEKLWfkP3BAZk",
           "name": "Google Drive account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/tmp/temp_file.pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        176,
+        64
+      ],
+      "id": "b1d911cf-85d4-4ba5-afd3-e767a910482c",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "command": "python3 /data/python-scripts/process_pdf.py"
+      },
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [
+        368,
+        64
+      ],
+      "id": "4dda648a-5204-4bbd-8f82-02be008fc07d",
+      "name": "Execute Command"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "key",
+              "value": "={{$env.GEMINI_API_KEY}}"
+            },
+            {}
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Você é um classificador de documentos. Analise o texto abaixo extraído de um arquivo.\\n\\nRegras:\\n1. Se for nota fiscal/recibo: type='INVOICE'. Extraia 'total_amount' (número) e 'vendor_name'.\\n2. Se for documento pessoal (RG/CNH): type='ID_CARD'. Extraia 'full_name' e 'doc_number'.\\n3. Outros: type='OTHER'. Crie um 'summary'.\\n\\nResponda APENAS com o objeto JSON.\\n\\nTEXTO:\\n{{ JSON.stringify($json.extracted_text).slice(1, -1) }}\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"response_mime_type\": \"application/json\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        160,
+        272
+      ],
+      "id": "9bba226b-91fb-47f1-aa38-45ed6f2c9779",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "import json\n\njsproxy_json = items[0].json\n\nstdout = json.loads(jsproxy_json.stdout)\n\nreturn stdout"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        64
+      ],
+      "id": "755b9494-74be-4709-a133-fe6b875f0e21",
+      "name": "Code in Python (Beta)"
     }
   ],
   "pinData": {},
@@ -202,17 +281,61 @@
           }
         ]
       ]
+    },
+    "Download file": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Execute Command",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python (Beta)": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "19453349-c8e9-47eb-a5bb-543c7c6e539a",
+  "versionId": "76387b6e-8c94-4ec0-b08d-a0ffec14b91e",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "bab351a92ec4bad491fde54b8efca922bb88507784a1f68fc37ffc8467f6a098"
+    "instanceId": "e01b56afa26779f3bf4aa034d2cc10a0cc5efe0bde482193df7cb4c3089944f3"
   },
-  "id": "TqJwxBqkPS9P9jLf",
+  "id": "6mXQnP5oPNreMcVX",
   "tags": []
 }

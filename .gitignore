@@ -4,5 +4,8 @@
 # Ignore postgres database files
 .postgres-data
 
+# Ignore environment variables
+.env
+
 # Ignore python virtual envs
 .venv

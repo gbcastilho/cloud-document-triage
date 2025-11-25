@@ -12,6 +12,7 @@ services:
       - DB_POSTGRESDB_PASSWORD=mysecretpassword
       - DB_POSTGRESDB_DATABASE=n8n
       - N8N_WORKFLOW_FILES=/data/workflows
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
     volumes:
       - ./.n8n-data:/home/node/.n8n
       - ./workflows:/data/workflows
