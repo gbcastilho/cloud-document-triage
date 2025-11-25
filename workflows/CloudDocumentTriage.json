@@ -117,351 +117,6 @@
     },
     {
       "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.type }}",
-                    "rightValue": "INVOICE",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    },
-                    "id": "772a3de1-3d26-4720-90ee-78d7bf2931db"
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "Invoice"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "127f9cf3-a2be-4edc-9daf-cf7972b5abdd",
-                    "leftValue": "={{ $json.type }}",
-                    "rightValue": "ID_CARD",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "ID Card"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 2
-                },
-                "conditions": [
-                  {
-                    "id": "4162c88f-3eef-4e5a-ac78-4dedde0911c4",
-                    "leftValue": "={{ $json.type }}",
-                    "rightValue": "OTHER",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "Other"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.3,
-      "position": [
-        576,
-        288
-      ],
-      "id": "7f60a136-e337-4d59-b2ce-b0b8c136c496",
-      "name": "Switch"
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "schema": {
-          "__rl": true,
-          "value": "triage_app",
-          "mode": "list",
-          "cachedResultName": "triage_app"
-        },
-        "table": {
-          "__rl": true,
-          "value": "documents_log",
-          "mode": "list",
-          "cachedResultName": "documents_log"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "id": "={{ $('Create document log').item.json.id }}",
-            "status": "COMPLETED",
-            "ai_result": "={{JSON.stringify($json) }}"
-          },
-          "matchingColumns": [
-            "id"
-          ],
-          "schema": [
-            {
-              "id": "id",
-              "displayName": "id",
-              "required": false,
-              "defaultMatch": true,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "file_id",
-              "displayName": "file_id",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "status",
-              "displayName": "status",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "options",
-              "canBeUsedToMatch": true,
-              "options": [
-                {
-                  "name": "FAILED_UNKNOWN",
-                  "value": "FAILED_UNKNOWN"
-                },
-                {
-                  "name": "FAILED_CLASSIFICATION",
-                  "value": "FAILED_CLASSIFICATION"
-                },
-                {
-                  "name": "FAILED_EXTRACTION",
-                  "value": "FAILED_EXTRACTION"
-                },
-                {
-                  "name": "FAILED_FETCH",
-                  "value": "FAILED_FETCH"
-                },
-                {
-                  "name": "NEEDS_REVIEW",
-                  "value": "NEEDS_REVIEW"
-                },
-                {
-                  "name": "COMPLETED",
-                  "value": "COMPLETED"
-                },
-                {
-                  "name": "PROCESSING",
-                  "value": "PROCESSING"
-                },
-                {
-                  "name": "PENDING",
-                  "value": "PENDING"
-                }
-              ]
-            },
-            {
-              "id": "ai_result",
-              "displayName": "ai_result",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "object",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "created_at",
-              "displayName": "created_at",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "canBeUsedToMatch": true
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        800,
-        224
-      ],
-      "id": "06afbd98-0ba3-405b-b451-b6a08c3f294d",
-      "name": "Update rows in a table",
-      "credentials": {
-        "postgres": {
-          "id": "ekDDWloedMHPGU1L",
-          "name": "Postgres account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "update",
-        "schema": {
-          "__rl": true,
-          "value": "triage_app",
-          "mode": "list",
-          "cachedResultName": "triage_app"
-        },
-        "table": {
-          "__rl": true,
-          "value": "documents_log",
-          "mode": "list",
-          "cachedResultName": "documents_log"
-        },
-        "columns": {
-          "mappingMode": "defineBelow",
-          "value": {
-            "id": "={{ $('Create document log').item.json.id }}",
-            "status": "NEEDS_REVIEW",
-            "ai_result": "={{JSON.stringify($json) }}"
-          },
-          "matchingColumns": [
-            "id"
-          ],
-          "schema": [
-            {
-              "id": "id",
-              "displayName": "id",
-              "required": false,
-              "defaultMatch": true,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true,
-              "removed": false
-            },
-            {
-              "id": "file_id",
-              "displayName": "file_id",
-              "required": true,
-              "defaultMatch": false,
-              "display": true,
-              "type": "string",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "status",
-              "displayName": "status",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "options",
-              "canBeUsedToMatch": true,
-              "options": [
-                {
-                  "name": "FAILED_UNKNOWN",
-                  "value": "FAILED_UNKNOWN"
-                },
-                {
-                  "name": "FAILED_CLASSIFICATION",
-                  "value": "FAILED_CLASSIFICATION"
-                },
-                {
-                  "name": "FAILED_EXTRACTION",
-                  "value": "FAILED_EXTRACTION"
-                },
-                {
-                  "name": "FAILED_FETCH",
-                  "value": "FAILED_FETCH"
-                },
-                {
-                  "name": "NEEDS_REVIEW",
-                  "value": "NEEDS_REVIEW"
-                },
-                {
-                  "name": "COMPLETED",
-                  "value": "COMPLETED"
-                },
-                {
-                  "name": "PROCESSING",
-                  "value": "PROCESSING"
-                },
-                {
-                  "name": "PENDING",
-                  "value": "PENDING"
-                }
-              ]
-            },
-            {
-              "id": "ai_result",
-              "displayName": "ai_result",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "object",
-              "canBeUsedToMatch": true
-            },
-            {
-              "id": "created_at",
-              "displayName": "created_at",
-              "required": false,
-              "defaultMatch": false,
-              "display": true,
-              "type": "dateTime",
-              "canBeUsedToMatch": true
-            }
-          ],
-          "attemptToConvertTypes": false,
-          "convertFieldsToString": false
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        800,
-        368
-      ],
-      "id": "0f46624c-a46d-422f-bc5e-9fc6c9f193fa",
-      "name": "Update rows in a table1",
-      "credentials": {
-        "postgres": {
-          "id": "ekDDWloedMHPGU1L",
-          "name": "Postgres account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "schema": {
           "__rl": true,
           "value": "triage_app",
@@ -614,6 +269,761 @@
       ],
       "id": "f06e1b47-d710-48db-b7f7-a2266ae13ef6",
       "name": "Format classified text"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "13lGHrfn3BewGgI6kmv5T70BWFdV8WpdapTiKqUo-ADk",
+          "mode": "list",
+          "cachedResultName": "Processed Documents",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13lGHrfn3BewGgI6kmv5T70BWFdV8WpdapTiKqUo-ADk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13lGHrfn3BewGgI6kmv5T70BWFdV8WpdapTiKqUo-ADk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Document Type": "={{ $json.ai_result.type }}",
+            "Amount / Doc Number": "={{ $json.ai_result.total_amount }}",
+            "Vendor / Name": "={{ $json.ai_result.vendor_name }}",
+            "File ID": "={{ $json.file_id }}",
+            "Timestamp": "={{$now}}"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "File ID",
+              "displayName": "File ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Document Type",
+              "displayName": "Document Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Vendor / Name",
+              "displayName": "Vendor / Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount / Doc Number",
+              "displayName": "Amount / Doc Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary / Notes",
+              "displayName": "Summary / Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1280,
+        160
+      ],
+      "id": "2e527ff9-9ec1-4cd4-abdd-612628ea62e5",
+      "name": "Append invoice",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "p1gO1BuyUiAM4QQt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "13lGHrfn3BewGgI6kmv5T70BWFdV8WpdapTiKqUo-ADk",
+          "mode": "list",
+          "cachedResultName": "Processed Documents",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13lGHrfn3BewGgI6kmv5T70BWFdV8WpdapTiKqUo-ADk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13lGHrfn3BewGgI6kmv5T70BWFdV8WpdapTiKqUo-ADk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Document Type": "={{ $json.ai_result.type }}",
+            "Amount / Doc Number": "={{ $json.ai_result.doc_number }}",
+            "Vendor / Name": "={{ $json.ai_result.full_name }}",
+            "File ID": "={{ $json.file_id }}",
+            "Timestamp": "={{$now}}"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "File ID",
+              "displayName": "File ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Document Type",
+              "displayName": "Document Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Vendor / Name",
+              "displayName": "Vendor / Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount / Doc Number",
+              "displayName": "Amount / Doc Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary / Notes",
+              "displayName": "Summary / Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1280,
+        304
+      ],
+      "id": "869852f1-05eb-48a9-9589-3906b7c46146",
+      "name": "Append ID card",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "p1gO1BuyUiAM4QQt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "13lGHrfn3BewGgI6kmv5T70BWFdV8WpdapTiKqUo-ADk",
+          "mode": "list",
+          "cachedResultName": "Processed Documents",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13lGHrfn3BewGgI6kmv5T70BWFdV8WpdapTiKqUo-ADk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Página1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/13lGHrfn3BewGgI6kmv5T70BWFdV8WpdapTiKqUo-ADk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Document Type": "={{ $('Format classified text').item.json.type }}",
+            "Amount / Doc Number": "=",
+            "Vendor / Name": "=",
+            "File ID": "={{ $('Download file').item.json.file_id }}",
+            "Timestamp": "={{$now}}",
+            "Summary / Notes": "={{ $json.ai_result.summary }}"
+          },
+          "matchingColumns": [
+            "Timestamp"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "File ID",
+              "displayName": "File ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Document Type",
+              "displayName": "Document Type",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Vendor / Name",
+              "displayName": "Vendor / Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Amount / Doc Number",
+              "displayName": "Amount / Doc Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Summary / Notes",
+              "displayName": "Summary / Notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        1280,
+        448
+      ],
+      "id": "32c7219f-6090-4667-8401-b1c24a841aaf",
+      "name": "Append other",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "p1gO1BuyUiAM4QQt",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Switch db').item.json.type }}",
+                    "rightValue": "INVOICE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "772a3de1-3d26-4720-90ee-78d7bf2931db"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Invoice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "127f9cf3-a2be-4edc-9daf-cf7972b5abdd",
+                    "leftValue": "={{ $('Switch db').item.json.type }}",
+                    "rightValue": "ID_CARD",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ID Card"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4162c88f-3eef-4e5a-ac78-4dedde0911c4",
+                    "leftValue": "={{ $('Switch db').item.json.type }}",
+                    "rightValue": "OTHER",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Other"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        1024,
+        288
+      ],
+      "id": "d688947e-79e9-463b-8c23-a8aa50ce98cf",
+      "name": "Switch sheets"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "INVOICE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "772a3de1-3d26-4720-90ee-78d7bf2931db"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Invoice"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "127f9cf3-a2be-4edc-9daf-cf7972b5abdd",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "ID_CARD",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "ID Card"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "4162c88f-3eef-4e5a-ac78-4dedde0911c4",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "OTHER",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Other"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        576,
+        288
+      ],
+      "id": "7f60a136-e337-4d59-b2ce-b0b8c136c496",
+      "name": "Switch db"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "triage_app",
+          "mode": "list",
+          "cachedResultName": "triage_app"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documents_log",
+          "mode": "list",
+          "cachedResultName": "documents_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create document log').item.json.id }}",
+            "status": "COMPLETED",
+            "ai_result": "={{JSON.stringify($json) }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "FAILED_UNKNOWN",
+                  "value": "FAILED_UNKNOWN"
+                },
+                {
+                  "name": "FAILED_CLASSIFICATION",
+                  "value": "FAILED_CLASSIFICATION"
+                },
+                {
+                  "name": "FAILED_EXTRACTION",
+                  "value": "FAILED_EXTRACTION"
+                },
+                {
+                  "name": "FAILED_FETCH",
+                  "value": "FAILED_FETCH"
+                },
+                {
+                  "name": "NEEDS_REVIEW",
+                  "value": "NEEDS_REVIEW"
+                },
+                {
+                  "name": "COMPLETED",
+                  "value": "COMPLETED"
+                },
+                {
+                  "name": "PROCESSING",
+                  "value": "PROCESSING"
+                },
+                {
+                  "name": "PENDING",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            {
+              "id": "ai_result",
+              "displayName": "ai_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        800,
+        224
+      ],
+      "id": "06afbd98-0ba3-405b-b451-b6a08c3f294d",
+      "name": "Update invoice/id rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "ekDDWloedMHPGU1L",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "triage_app",
+          "mode": "list",
+          "cachedResultName": "triage_app"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documents_log",
+          "mode": "list",
+          "cachedResultName": "documents_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create document log').item.json.id }}",
+            "status": "NEEDS_REVIEW",
+            "ai_result": "={{JSON.stringify($json) }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "FAILED_UNKNOWN",
+                  "value": "FAILED_UNKNOWN"
+                },
+                {
+                  "name": "FAILED_CLASSIFICATION",
+                  "value": "FAILED_CLASSIFICATION"
+                },
+                {
+                  "name": "FAILED_EXTRACTION",
+                  "value": "FAILED_EXTRACTION"
+                },
+                {
+                  "name": "FAILED_FETCH",
+                  "value": "FAILED_FETCH"
+                },
+                {
+                  "name": "NEEDS_REVIEW",
+                  "value": "NEEDS_REVIEW"
+                },
+                {
+                  "name": "COMPLETED",
+                  "value": "COMPLETED"
+                },
+                {
+                  "name": "PROCESSING",
+                  "value": "PROCESSING"
+                },
+                {
+                  "name": "PENDING",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            {
+              "id": "ai_result",
+              "displayName": "ai_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        800,
+        384
+      ],
+      "id": "0f46624c-a46d-422f-bc5e-9fc6c9f193fa",
+      "name": "Update other rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "ekDDWloedMHPGU1L",
+          "name": "Postgres account"
+        }
+      }
     }
   ],
   "pinData": {},
@@ -673,31 +1083,6 @@
         ]
       ]
     },
-    "Switch": {
-      "main": [
-        [
-          {
-            "node": "Update rows in a table",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Update rows in a table",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Update rows in a table1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Create document log": {
       "main": [
         [
@@ -724,7 +1109,79 @@
       "main": [
         [
           {
-            "node": "Switch",
+            "node": "Switch db",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch sheets": {
+      "main": [
+        [
+          {
+            "node": "Append invoice",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append ID card",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Append other",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch db": {
+      "main": [
+        [
+          {
+            "node": "Update invoice/id rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update invoice/id rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update other rows in a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update invoice/id rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Switch sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update other rows in a table": {
+      "main": [
+        [
+          {
+            "node": "Switch sheets",
             "type": "main",
             "index": 0
           }
@@ -736,7 +1193,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "31305658-ad57-4017-b19d-a4c94480700d",
+  "versionId": "d439459b-4768-4397-a4c2-d7917d1a8671",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e01b56afa26779f3bf4aa034d2cc10a0cc5efe0bde482193df7cb4c3089944f3"
