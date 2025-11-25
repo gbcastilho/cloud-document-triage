@@ -19,7 +19,7 @@
       "typeVersion": 2.3,
       "position": [
         144,
-        -144
+        -240
       ],
       "id": "892d3e4a-9794-4f66-b30c-94ede9b9ef0b",
       "name": "On form submission",
@@ -39,17 +39,20 @@
       "type": "n8n-nodes-base.googleDrive",
       "typeVersion": 3,
       "position": [
-        560,
+        592,
         -144
       ],
       "id": "477561c6-8f40-4b17-b7f4-44a45bdae541",
       "name": "Download file",
+      "retryOnFail": false,
+      "alwaysOutputData": true,
       "credentials": {
         "googleDriveOAuth2Api": {
           "id": "pv0VEKLWfkP3BAZk",
           "name": "Google Drive account"
         }
-      }
+      },
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -60,8 +63,8 @@
       "type": "n8n-nodes-base.readWriteFile",
       "typeVersion": 1,
       "position": [
-        176,
-        64
+        1040,
+        32
       ],
       "id": "b1d911cf-85d4-4ba5-afd3-e767a910482c",
       "name": "Read/Write Files from Disk"
@@ -73,11 +76,12 @@
       "type": "n8n-nodes-base.executeCommand",
       "typeVersion": 1,
       "position": [
-        368,
-        64
+        1264,
+        32
       ],
       "id": "4dda648a-5204-4bbd-8f82-02be008fc07d",
-      "name": "Execute Command"
+      "name": "Execute Command",
+      "onError": "continueRegularOutput"
     },
     {
       "parameters": {
@@ -103,14 +107,14 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"contents\": [\n    {\n      \"parts\": [\n        {\n          \"text\": \"Você é um classificador de documentos. Analise o texto abaixo extraído de um arquivo.\\n\\nRegras:\\n1. Se for nota fiscal/recibo: type='INVOICE'. Extraia 'total_amount' (número) e 'vendor_name'.\\n2. Se for documento pessoal (RG/CNH): type='ID_CARD'. Extraia 'full_name' e 'doc_number'.\\n3. Outros: type='OTHER'. Crie um 'summary'.\\n\\nResponda APENAS com o objeto JSON.\\n\\nTEXTO:\\n{{ JSON.stringify($json.extracted_text).slice(1, -1) }}\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\": {\n    \"response_mime_type\": \"application/json\"\n  }\n}",
+        "jsonBody": "={\n  \"contents\":[\n    {\n      \"parts\":[\n        {\n          \"text\":\"Você é um classificador de documentos rigoroso. Analise o texto abaixo.\\n\\nRegras de Classificação:\\n1. Se for nota fiscal/recibo: type='INVOICE'. Extraia 'total_amount' e 'vendor_name'.\\n2. Se for documento pessoal (RG/CNH): type='ID_CARD'. Extraia 'full_name' e 'doc_number'.\\n3. Se o texto estiver vazio, ilegível, muito curto ou não parecer um documento válido: type='UNKNOWN'. Defina 'reason' como 'Insufficient information'.\\n4. Para outros documentos válidos (contratos, cartas) que não sejam os acima: type='OTHER'. Crie um 'summary'.\\n\\nResponda APENAS com o objeto JSON.\\n\\nTEXTO:\\n{{ JSON.stringify($json.extracted_text).slice(1, -1) }}\"\n        }\n      ]\n    }\n  ],\n  \"generationConfig\":{\n    \"response_mime_type\":\"application/json\"\n  }\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.3,
       "position": [
-        160,
-        304
+        1936,
+        144
       ],
       "id": "9bba226b-91fb-47f1-aa38-45ed6f2c9779",
       "name": "HTTP Request"
@@ -230,8 +234,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        352,
-        -144
+        368,
+        -240
       ],
       "id": "8480996e-bdc3-4cb1-ba91-bb8554645b75",
       "name": "Create document log",
@@ -250,8 +254,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        576,
-        64
+        1712,
+        144
       ],
       "id": "755b9494-74be-4709-a133-fe6b875f0e21",
       "name": "Format stdout"
@@ -264,8 +268,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        368,
-        304
+        2160,
+        144
       ],
       "id": "f06e1b47-d710-48db-b7f7-a2266ae13ef6",
       "name": "Format classified text"
@@ -364,8 +368,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        1280,
-        160
+        3280,
+        -336
       ],
       "id": "2e527ff9-9ec1-4cd4-abdd-612628ea62e5",
       "name": "Append invoice",
@@ -470,8 +474,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        1280,
-        304
+        3280,
+        -144
       ],
       "id": "869852f1-05eb-48a9-9589-3906b7c46146",
       "name": "Append ID card",
@@ -577,8 +581,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        1280,
-        448
+        3280,
+        48
       ],
       "id": "32c7219f-6090-4667-8401-b1c24a841aaf",
       "name": "Append other",
@@ -674,8 +678,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.3,
       "position": [
-        1024,
-        288
+        3056,
+        -144
       ],
       "id": "d688947e-79e9-463b-8c23-a8aa50ce98cf",
       "name": "Switch sheets"
@@ -760,13 +764,15 @@
             }
           ]
         },
-        "options": {}
+        "options": {
+          "fallbackOutput": "extra"
+        }
       },
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.3,
       "position": [
-        576,
-        288
+        2608,
+        224
       ],
       "id": "7f60a136-e337-4d59-b2ce-b0b8c136c496",
       "name": "Switch db"
@@ -886,8 +892,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        800,
-        224
+        2832,
+        -240
       ],
       "id": "06afbd98-0ba3-405b-b451-b6a08c3f294d",
       "name": "Update invoice/id rows in a table",
@@ -1013,11 +1019,802 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        800,
-        384
+        2832,
+        160
       ],
       "id": "0f46624c-a46d-422f-bc5e-9fc6c9f193fa",
       "name": "Update other rows in a table",
+      "credentials": {
+        "postgres": {
+          "id": "ekDDWloedMHPGU1L",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "triage_app",
+          "mode": "list",
+          "cachedResultName": "triage_app"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documents_log",
+          "mode": "list",
+          "cachedResultName": "documents_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $json.id }}",
+            "status": "PROCESSING"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "FAILED_UNKNOWN",
+                  "value": "FAILED_UNKNOWN"
+                },
+                {
+                  "name": "FAILED_CLASSIFICATION",
+                  "value": "FAILED_CLASSIFICATION"
+                },
+                {
+                  "name": "FAILED_EXTRACTION",
+                  "value": "FAILED_EXTRACTION"
+                },
+                {
+                  "name": "FAILED_FETCH",
+                  "value": "FAILED_FETCH"
+                },
+                {
+                  "name": "NEEDS_REVIEW",
+                  "value": "NEEDS_REVIEW"
+                },
+                {
+                  "name": "COMPLETED",
+                  "value": "COMPLETED"
+                },
+                {
+                  "name": "PROCESSING",
+                  "value": "PROCESSING"
+                },
+                {
+                  "name": "PENDING",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            {
+              "id": "ai_result",
+              "displayName": "ai_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        592,
+        -336
+      ],
+      "id": "74695a67-4a08-4969-a24e-fff958a9bb4d",
+      "name": "Update PROCESSING status",
+      "credentials": {
+        "postgres": {
+          "id": "ekDDWloedMHPGU1L",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3fb4e040-5ba4-4f56-a0c7-7bdf2f343770",
+              "leftValue": "={{ $json.stderr }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        32
+      ],
+      "id": "218ccf1d-aa11-44de-803e-f0895211850a",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "triage_app",
+          "mode": "list",
+          "cachedResultName": "triage_app"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documents_log",
+          "mode": "list",
+          "cachedResultName": "documents_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create document log').item.json.id }}",
+            "status": "FAILED_EXTRACTION",
+            "error_details": "={{ $json.stderr }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "FAILED_UNKNOWN",
+                  "value": "FAILED_UNKNOWN"
+                },
+                {
+                  "name": "FAILED_CLASSIFICATION",
+                  "value": "FAILED_CLASSIFICATION"
+                },
+                {
+                  "name": "FAILED_EXTRACTION",
+                  "value": "FAILED_EXTRACTION"
+                },
+                {
+                  "name": "FAILED_FETCH",
+                  "value": "FAILED_FETCH"
+                },
+                {
+                  "name": "NEEDS_REVIEW",
+                  "value": "NEEDS_REVIEW"
+                },
+                {
+                  "name": "COMPLETED",
+                  "value": "COMPLETED"
+                },
+                {
+                  "name": "PROCESSING",
+                  "value": "PROCESSING"
+                },
+                {
+                  "name": "PENDING",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            {
+              "id": "ai_result",
+              "displayName": "ai_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "error_details",
+              "displayName": "error_details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1712,
+        -48
+      ],
+      "id": "b14afc1e-4fa9-4459-95b7-a0bf93b508ce",
+      "name": "Update EXTRACTION_FAILED status",
+      "credentials": {
+        "postgres": {
+          "id": "ekDDWloedMHPGU1L",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7997caf1-5030-4721-a262-18edf51fc2d4",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "UNKNOWN",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2384,
+        144
+      ],
+      "id": "f57b77fe-3568-4c51-b49a-12905c5c623c",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "triage_app",
+          "mode": "list",
+          "cachedResultName": "triage_app"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documents_log",
+          "mode": "list",
+          "cachedResultName": "documents_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create document log').item.json.id }}",
+            "status": "FAILED_CLASSIFICATION",
+            "error_details": "={{ $json.reason }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "FAILED_UNKNOWN",
+                  "value": "FAILED_UNKNOWN"
+                },
+                {
+                  "name": "FAILED_CLASSIFICATION",
+                  "value": "FAILED_CLASSIFICATION"
+                },
+                {
+                  "name": "FAILED_EXTRACTION",
+                  "value": "FAILED_EXTRACTION"
+                },
+                {
+                  "name": "FAILED_FETCH",
+                  "value": "FAILED_FETCH"
+                },
+                {
+                  "name": "NEEDS_REVIEW",
+                  "value": "NEEDS_REVIEW"
+                },
+                {
+                  "name": "COMPLETED",
+                  "value": "COMPLETED"
+                },
+                {
+                  "name": "PROCESSING",
+                  "value": "PROCESSING"
+                },
+                {
+                  "name": "PENDING",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            {
+              "id": "ai_result",
+              "displayName": "ai_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "error_details",
+              "displayName": "error_details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2608,
+        32
+      ],
+      "id": "dad5c5f1-d0ac-4ccf-a4b3-7e6b8fde8d5c",
+      "name": "Update CLASSIFICATION_FAILED status",
+      "credentials": {
+        "postgres": {
+          "id": "ekDDWloedMHPGU1L",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "triage_app",
+          "mode": "list",
+          "cachedResultName": "triage_app"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documents_log",
+          "mode": "list",
+          "cachedResultName": "documents_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create document log').item.json.id }}",
+            "status": "FAILED_FETCH",
+            "error_details": "Download failed. Possible causes: Invalid File ID, file deleted, or missing access permissions."
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "FAILED_UNKNOWN",
+                  "value": "FAILED_UNKNOWN"
+                },
+                {
+                  "name": "FAILED_CLASSIFICATION",
+                  "value": "FAILED_CLASSIFICATION"
+                },
+                {
+                  "name": "FAILED_EXTRACTION",
+                  "value": "FAILED_EXTRACTION"
+                },
+                {
+                  "name": "FAILED_FETCH",
+                  "value": "FAILED_FETCH"
+                },
+                {
+                  "name": "NEEDS_REVIEW",
+                  "value": "NEEDS_REVIEW"
+                },
+                {
+                  "name": "COMPLETED",
+                  "value": "COMPLETED"
+                },
+                {
+                  "name": "PROCESSING",
+                  "value": "PROCESSING"
+                },
+                {
+                  "name": "PENDING",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            {
+              "id": "ai_result",
+              "displayName": "ai_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "error_details",
+              "displayName": "error_details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1040,
+        -160
+      ],
+      "id": "bcf4c55c-4b75-4621-8711-a145ff15ad50",
+      "name": "Update FETCH_FAILED status",
+      "credentials": {
+        "postgres": {
+          "id": "ekDDWloedMHPGU1L",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c4d34d6d-e4cb-466f-af01-c0724c0d86cf",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        -144
+      ],
+      "id": "bc8563b3-4352-4cd0-959a-bd7197a78249",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "value": "triage_app",
+          "mode": "list",
+          "cachedResultName": "triage_app"
+        },
+        "table": {
+          "__rl": true,
+          "value": "documents_log",
+          "mode": "list",
+          "cachedResultName": "documents_log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create document log').item.json.id }}",
+            "status": "FAILED_UNKNOWN",
+            "error_details": "={{ $('HTTP Request').item.json.candidates[0].content.parts[0].text }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "file_id",
+              "displayName": "file_id",
+              "required": true,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "options",
+              "canBeUsedToMatch": true,
+              "options": [
+                {
+                  "name": "FAILED_UNKNOWN",
+                  "value": "FAILED_UNKNOWN"
+                },
+                {
+                  "name": "FAILED_CLASSIFICATION",
+                  "value": "FAILED_CLASSIFICATION"
+                },
+                {
+                  "name": "FAILED_EXTRACTION",
+                  "value": "FAILED_EXTRACTION"
+                },
+                {
+                  "name": "FAILED_FETCH",
+                  "value": "FAILED_FETCH"
+                },
+                {
+                  "name": "NEEDS_REVIEW",
+                  "value": "NEEDS_REVIEW"
+                },
+                {
+                  "name": "COMPLETED",
+                  "value": "COMPLETED"
+                },
+                {
+                  "name": "PROCESSING",
+                  "value": "PROCESSING"
+                },
+                {
+                  "name": "PENDING",
+                  "value": "PENDING"
+                }
+              ]
+            },
+            {
+              "id": "ai_result",
+              "displayName": "ai_result",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "object",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "created_at",
+              "displayName": "created_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "error_details",
+              "displayName": "error_details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2832,
+        352
+      ],
+      "id": "8e7e1d22-ea5e-4b11-acb2-c79ff0a7f82e",
+      "name": "Update UNKNOWN_FAILED status",
       "credentials": {
         "postgres": {
           "id": "ekDDWloedMHPGU1L",
@@ -1043,11 +1840,12 @@
       "main": [
         [
           {
-            "node": "Read/Write Files from Disk",
+            "node": "If2",
             "type": "main",
             "index": 0
           }
-        ]
+        ],
+        []
       ]
     },
     "Read/Write Files from Disk": {
@@ -1065,7 +1863,7 @@
       "main": [
         [
           {
-            "node": "Format stdout",
+            "node": "If",
             "type": "main",
             "index": 0
           }
@@ -1086,6 +1884,11 @@
     "Create document log": {
       "main": [
         [
+          {
+            "node": "Update PROCESSING status",
+            "type": "main",
+            "index": 0
+          },
           {
             "node": "Download file",
             "type": "main",
@@ -1109,7 +1912,7 @@
       "main": [
         [
           {
-            "node": "Switch db",
+            "node": "If1",
             "type": "main",
             "index": 0
           }
@@ -1163,6 +1966,13 @@
             "type": "main",
             "index": 0
           }
+        ],
+        [
+          {
+            "node": "Update UNKNOWN_FAILED status",
+            "type": "main",
+            "index": 0
+          }
         ]
       ]
     },
@@ -1187,13 +1997,72 @@
           }
         ]
       ]
+    },
+    "Update PROCESSING status": {
+      "main": [
+        []
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Update EXTRACTION_FAILED status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format stdout",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Update CLASSIFICATION_FAILED status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Switch db",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "Update FETCH_FAILED status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "d439459b-4768-4397-a4c2-d7917d1a8671",
+  "versionId": "395e93ab-bb95-463f-9683-78fbc1f078ec",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e01b56afa26779f3bf4aa034d2cc10a0cc5efe0bde482193df7cb4c3089944f3"
