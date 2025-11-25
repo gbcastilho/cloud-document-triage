@@ -1162,40 +1162,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "3fb4e040-5ba4-4f56-a0c7-7bdf2f343770",
-              "leftValue": "={{ $json.stderr }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        1488,
-        32
-      ],
-      "id": "218ccf1d-aa11-44de-803e-f0895211850a",
-      "name": "If"
-    },
-    {
-      "parameters": {
         "operation": "update",
         "schema": {
           "__rl": true,
@@ -1333,40 +1299,6 @@
           "name": "Postgres account"
         }
       }
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "7997caf1-5030-4721-a262-18edf51fc2d4",
-              "leftValue": "={{ $json.type }}",
-              "rightValue": "UNKNOWN",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        2384,
-        144
-      ],
-      "id": "f57b77fe-3568-4c51-b49a-12905c5c623c",
-      "name": "If1"
     },
     {
       "parameters": {
@@ -1650,40 +1582,6 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "c4d34d6d-e4cb-466f-af01-c0724c0d86cf",
-              "leftValue": "={{ $json.id }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "notExists",
-                "singleValue": true
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        816,
-        -144
-      ],
-      "id": "bc8563b3-4352-4cd0-959a-bd7197a78249",
-      "name": "If2"
-    },
-    {
-      "parameters": {
         "operation": "update",
         "schema": {
           "__rl": true,
@@ -1821,6 +1719,108 @@
           "name": "Postgres account"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c4d34d6d-e4cb-466f-af01-c0724c0d86cf",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notExists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        -144
+      ],
+      "id": "bc8563b3-4352-4cd0-959a-bd7197a78249",
+      "name": "Failed fetch?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7997caf1-5030-4721-a262-18edf51fc2d4",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "UNKNOWN",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2384,
+        144
+      ],
+      "id": "f57b77fe-3568-4c51-b49a-12905c5c623c",
+      "name": "Failed classification?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3fb4e040-5ba4-4f56-a0c7-7bdf2f343770",
+              "leftValue": "={{ $json.stderr }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1488,
+        32
+      ],
+      "id": "218ccf1d-aa11-44de-803e-f0895211850a",
+      "name": "Failed extraction?"
     }
   ],
   "pinData": {},
@@ -1840,7 +1840,7 @@
       "main": [
         [
           {
-            "node": "If2",
+            "node": "Failed fetch?",
             "type": "main",
             "index": 0
           }
@@ -1863,7 +1863,7 @@
       "main": [
         [
           {
-            "node": "If",
+            "node": "Failed extraction?",
             "type": "main",
             "index": 0
           }
@@ -1912,7 +1912,7 @@
       "main": [
         [
           {
-            "node": "If1",
+            "node": "Failed classification?",
             "type": "main",
             "index": 0
           }
@@ -2003,25 +2003,25 @@
         []
       ]
     },
-    "If": {
+    "Failed fetch?": {
       "main": [
         [
           {
-            "node": "Update EXTRACTION_FAILED status",
+            "node": "Update FETCH_FAILED status",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Format stdout",
+            "node": "Read/Write Files from Disk",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "If1": {
+    "Failed classification?": {
       "main": [
         [
           {
@@ -2039,18 +2039,18 @@
         ]
       ]
     },
-    "If2": {
+    "Failed extraction?": {
       "main": [
         [
           {
-            "node": "Update FETCH_FAILED status",
+            "node": "Update EXTRACTION_FAILED status",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Read/Write Files from Disk",
+            "node": "Format stdout",
             "type": "main",
             "index": 0
           }
@@ -2062,7 +2062,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "395e93ab-bb95-463f-9683-78fbc1f078ec",
+  "versionId": "5f3150e8-557a-4d01-a024-0db31b79d60d",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e01b56afa26779f3bf4aa034d2cc10a0cc5efe0bde482193df7cb4c3089944f3"
